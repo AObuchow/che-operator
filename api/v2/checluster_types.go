@@ -283,7 +283,7 @@ type Database struct {
 	// PVC settings for PostgreSQL database.
 	// +optional
 	// +kubebuilder:default:={claimSize: "1Gi"}
-	Pvc *PVC `json:"pvc,omitempty"`
+	Pvc PerUserStrategyPvcConfig `json:"pvc,omitempty"`
 }
 
 // Che server metrics configuration
@@ -353,9 +353,9 @@ type TrustedCerts struct {
 
 // Configuration settings related to the workspaces persistent storage.
 type WorkspaceStorage struct {
-	// PVC settings.
+	// PVC settings when using "per-user" PVC strategy.
 	// +optional
-	Pvc *PVC `json:"pvc,omitempty"`
+	PerUserStrategyPvcConfig PerUserStrategyPvcConfig `json:"pvc,omitempty"`
 	// Persistent volume claim strategy for the Che server.
 	// Only the `common` strategy (all workspaces PVCs in one volume) is supported .
 	// For details, see https://github.com/eclipse/che/issues/21185.
@@ -450,8 +450,8 @@ type Proxy struct {
 	CredentialsSecretName string `json:"credentialsSecretName,omitempty"`
 }
 
-// PersistentVolumeClaim custom settings.
-type PVC struct {
+// Custom settings for the "per-user" PersistentVolumeClaim strategy.
+type PerUserStrategyPvcConfig struct {
 	// Persistent Volume Claim size. To update the claim size, the storage class that provisions it must support resizing.
 	// +optional
 	ClaimSize string `json:"claimSize,omitempty"`

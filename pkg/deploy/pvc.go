@@ -35,7 +35,7 @@ var pvcDiffOpts = cmp.Options{
 func SyncPVCToCluster(
 	deployContext *chetypes.DeployContext,
 	name string,
-	pvc *chev2.PVC,
+	pvc *chev2.PerUserStrategyPvcConfig,
 	component string) (bool, error) {
 
 	pvcSpec := getPVCSpec(deployContext, name, pvc, component)
@@ -55,7 +55,7 @@ func SyncPVCToCluster(
 func getPVCSpec(
 	deployContext *chetypes.DeployContext,
 	name string,
-	pvc *chev2.PVC,
+	pvc *chev2.PerUserStrategyPvcConfig,
 	component string) *corev1.PersistentVolumeClaim {
 
 	labels := GetLabels(component)

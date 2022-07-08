@@ -28,16 +28,16 @@ import (
 func TestSyncPVCToCluster(t *testing.T) {
 	ctx := test.GetDeployContext(nil, []runtime.Object{})
 
-	done, err := SyncPVCToCluster(ctx, "test", &chev2.PVC{ClaimSize: "1Gi"}, "che")
+	done, err := SyncPVCToCluster(ctx, "test", &chev2.PerUserStrategyPvcConfig{ClaimSize: "1Gi"}, "che")
 	assert.True(t, done)
 	assert.Nil(t, err)
 
 	// sync a new pvc
-	_, err = SyncPVCToCluster(ctx, "test", &chev2.PVC{ClaimSize: "2Gi"}, "che")
+	_, err = SyncPVCToCluster(ctx, "test", &chev2.PerUserStrategyPvcConfig{ClaimSize: "2Gi"}, "che")
 	assert.Nil(t, err)
 
 	// sync pvc twice to be sure update done correctly
-	_, err = SyncPVCToCluster(ctx, "test", &chev2.PVC{ClaimSize: "2Gi"}, "che")
+	_, err = SyncPVCToCluster(ctx, "test", &chev2.PerUserStrategyPvcConfig{ClaimSize: "2Gi"}, "che")
 	assert.Nil(t, err)
 
 	actual := &corev1.PersistentVolumeClaim{}

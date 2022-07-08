@@ -138,7 +138,7 @@ func TestConvertFrom(t *testing.T) {
 					PostgresPort:          "PostgresPort",
 					PostgresDb:            "PostgresDb",
 					CredentialsSecretName: "DatabaseCredentialsSecretName",
-					Pvc: &chev2.PVC{
+					Pvc: chev2.PerUserStrategyPvcConfig{
 						ClaimSize:    "DatabaseClaimSize",
 						StorageClass: "DatabaseStorageClass",
 					},
@@ -322,7 +322,7 @@ func TestConvertFrom(t *testing.T) {
 					GitTrustedCertsConfigMapName: "che-git-self-signed-cert",
 				},
 				Storage: chev2.WorkspaceStorage{
-					Pvc: &chev2.PVC{
+					PerUserStrategyPvcConfig: chev2.PerUserStrategyPvcConfig{
 						ClaimSize:    "StorageClaimSize",
 						StorageClass: "StorageClass",
 					},
