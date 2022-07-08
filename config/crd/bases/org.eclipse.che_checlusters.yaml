@@ -5028,7 +5028,7 @@ spec:
                     description: Workspaces persistent storage.
                     properties:
                       pvc:
-                        description: PVC settings.
+                        description: PVC settings when using "per-user" PVC strategy.
                         properties:
                           claimSize:
                             description: Persistent Volume Claim size. To update the
