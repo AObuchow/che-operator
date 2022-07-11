@@ -137,7 +137,7 @@ func (src *CheCluster) convertTo_DevEnvironments(dst *chev2.CheCluster) error {
 }
 
 func (src *CheCluster) convertTo_Workspaces_Storage(dst *chev2.CheCluster) error {
-	dst.Spec.DevEnvironments.Storage.Pvc = toCheV2Pvc(src.Spec.Storage.PvcClaimSize, src.Spec.Storage.WorkspacePVCStorageClassName)
+	dst.Spec.DevEnvironments.Storage.PerUserStrategyPvcConfig = *toCheV2Pvc(src.Spec.Storage.PvcClaimSize, src.Spec.Storage.WorkspacePVCStorageClassName)
 	dst.Spec.DevEnvironments.Storage.PvcStrategy = src.Spec.Storage.PvcStrategy
 	return nil
 }
@@ -473,7 +473,7 @@ func (src *CheCluster) convertTo_Components_Database(dst *chev2.CheCluster) erro
 	dst.Spec.Components.Database.PostgresHostName = src.Spec.Database.ChePostgresHostName
 	dst.Spec.Components.Database.PostgresPort = src.Spec.Database.ChePostgresPort
 
-	dst.Spec.Components.Database.Pvc = toCheV2Pvc(src.Spec.Database.PvcClaimSize, src.Spec.Storage.PostgresPVCStorageClassName)
+	dst.Spec.Components.Database.Pvc = *toCheV2Pvc(src.Spec.Database.PvcClaimSize, src.Spec.Storage.PostgresPVCStorageClassName)
 	return nil
 }
 
@@ -692,9 +692,9 @@ func toCheV2Deployment(
 	return deployment
 }
 
-func toCheV2Pvc(claimSize string, storageClass string) *chev2.PVC {
+func toCheV2Pvc(claimSize string, storageClass string) *chev2.PerUserStrategyPvcConfig {
 	if claimSize != "" || storageClass != "" {
-		return &chev2.PVC{
+		return &chev2.PerUserStrategyPvcConfig{
 			ClaimSize:    claimSize,
 			StorageClass: storageClass,
 		}

@@ -82,11 +82,11 @@ func (p *PostgresReconciler) syncService(ctx *chetypes.DeployContext) (bool, err
 }
 
 func (p *PostgresReconciler) syncPVC(ctx *chetypes.DeployContext) (bool, error) {
-	pvc := &chev2.PVC{
+	pvc := &chev2.PerUserStrategyPvcConfig{
 		ClaimSize: constants.DefaultPostgresPvcClaimSize,
 	}
 
-	if ctx.CheCluster.Spec.Components.Database.Pvc != nil {
+	if &ctx.CheCluster.Spec.Components.Database.Pvc != nil {
 		pvc.StorageClass = ctx.CheCluster.Spec.Components.Database.Pvc.StorageClass
 		if ctx.CheCluster.Spec.Components.Database.Pvc.ClaimSize != "" {
 			pvc.ClaimSize = ctx.CheCluster.Spec.Components.Database.Pvc.ClaimSize

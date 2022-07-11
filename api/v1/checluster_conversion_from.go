@@ -309,7 +309,7 @@ func (dst *CheCluster) convertFrom_Database(src *chev2.CheCluster) error {
 	dst.Spec.Database.ChePostgresHostName = src.Spec.Components.Database.PostgresHostName
 	dst.Spec.Database.ChePostgresPort = src.Spec.Components.Database.PostgresPort
 	dst.Spec.Database.PostgresVersion = src.Status.PostgresVersion
-	if src.Spec.Components.Database.Pvc != nil {
+	if &src.Spec.Components.Database.Pvc != nil {
 		dst.Spec.Database.PvcClaimSize = src.Spec.Components.Database.Pvc.ClaimSize
 	}
 	dst.Spec.Database.ChePostgresSecret = src.Spec.Components.Database.CredentialsSecretName
@@ -398,14 +398,14 @@ func (dst *CheCluster) convertFrom_Status(src *chev2.CheCluster) error {
 }
 
 func (dst *CheCluster) convertFrom_Storage(src *chev2.CheCluster) error {
-	if src.Spec.Components.Database.Pvc != nil {
+	if &src.Spec.Components.Database.Pvc != nil {
 		dst.Spec.Storage.PostgresPVCStorageClassName = src.Spec.Components.Database.Pvc.StorageClass
 	}
 
 	dst.Spec.Storage.PvcStrategy = src.Spec.DevEnvironments.Storage.PvcStrategy
-	if src.Spec.DevEnvironments.Storage.Pvc != nil {
-		dst.Spec.Storage.PvcClaimSize = src.Spec.DevEnvironments.Storage.Pvc.ClaimSize
-		dst.Spec.Storage.WorkspacePVCStorageClassName = src.Spec.DevEnvironments.Storage.Pvc.StorageClass
+	if &src.Spec.DevEnvironments.Storage.PerUserStrategyPvcConfig != nil {
+		dst.Spec.Storage.PvcClaimSize = src.Spec.DevEnvironments.Storage.PerUserStrategyPvcConfig.ClaimSize
+		dst.Spec.Storage.WorkspacePVCStorageClassName = src.Spec.DevEnvironments.Storage.PerUserStrategyPvcConfig.StorageClass
 	}
 
 	return nil
