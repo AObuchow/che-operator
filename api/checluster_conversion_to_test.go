@@ -410,8 +410,8 @@ func TestConvertTo(t *testing.T) {
 	assert.Equal(t, checlusterv2.Spec.Components.PluginRegistry.DisableInternalRegistry, true)
 	assert.Equal(t, checlusterv2.Spec.Components.PluginRegistry.ExternalPluginRegistries, []chev2.ExternalPluginRegistry{{Url: "PluginRegistryUrl"}})
 
-	assert.Equal(t, checlusterv2.Spec.DevEnvironments.Storage.Pvc.ClaimSize, "WorkspacePvcClaimSize")
-	assert.Equal(t, checlusterv2.Spec.DevEnvironments.Storage.Pvc.StorageClass, "WorkspacePVCStorageClassName")
+	assert.Equal(t, checlusterv2.Spec.DevEnvironments.Storage.PerUserStrategyPvcConfig.ClaimSize, "WorkspacePvcClaimSize")
+	assert.Equal(t, checlusterv2.Spec.DevEnvironments.Storage.PerUserStrategyPvcConfig.StorageClass, "WorkspacePVCStorageClassName")
 	assert.Equal(t, checlusterv2.Spec.DevEnvironments.Storage.PvcStrategy, "PvcStrategy")
 
 	assert.Equal(t, checlusterv2.Status.CheURL, "CheURL")
