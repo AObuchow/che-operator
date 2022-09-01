@@ -12,10 +12,11 @@
 package devworkspaceconfig
 
 import (
+	"testing"
+
 	"github.com/eclipse-che/che-operator/pkg/common/constants"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/utils/pointer"
-	"testing"
 
 	"context"
 
