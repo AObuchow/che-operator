@@ -54,7 +54,10 @@ func (d *DevWorkspaceConfigReconciler) Reconcile(ctx *chetypes.DeployContext) (r
 	if dwoc.Config == nil {
 		dwoc.Config = &controllerv1alpha1.OperatorConfiguration{}
 	}
-	updateOperatorConfig(ctx.CheCluster.Spec.DevEnvironments.Storage, dwoc.Config)
+	err := updateOperatorConfig(ctx.CheCluster.Spec.DevEnvironments.Storage, dwoc.Config)
+	if err != nil {
+		return reconcile.Result{}, false, err
+	}
 
 	done, err := deploy.Sync(ctx, dwoc)
 	if !done {
@@ -68,7 +71,7 @@ func (d *DevWorkspaceConfigReconciler) Finalize(ctx *chetypes.DeployContext) boo
 	return true
 }
 
-func updateOperatorConfig(storage chev2.WorkspaceStorage, operatorConfig *controllerv1alpha1.OperatorConfiguration) {
+func updateOperatorConfig(storage chev2.WorkspaceStorage, operatorConfig *controllerv1alpha1.OperatorConfiguration) error {
 	var pvc *chev2.PVC
 
 	pvcStrategy := utils.GetValue(storage.PvcStrategy, constants.DefaultPvcStorageStrategy)
@@ -89,11 +92,12 @@ func updateOperatorConfig(storage chev2.WorkspaceStorage, operatorConfig *contro
 		if operatorConfig.Workspace == nil {
 			operatorConfig.Workspace = &controllerv1alpha1.WorkspaceConfig{}
 		}
-		updateWorkspaceConfig(pvc, pvcStrategy == constants.PerWorkspacePVCStorageStrategy, operatorConfig.Workspace)
+		return updateWorkspaceConfig(pvc, pvcStrategy == constants.PerWorkspacePVCStorageStrategy, operatorConfig.Workspace)
 	}
+	return nil
 }
 
-func updateWorkspaceConfig(pvc *chev2.PVC, isPerWorkspacePVCStorageStrategy bool, workspaceConfig *controllerv1alpha1.WorkspaceConfig) {
+func updateWorkspaceConfig(pvc *chev2.PVC, isPerWorkspacePVCStorageStrategy bool, workspaceConfig *controllerv1alpha1.WorkspaceConfig) error {
 	if pvc.StorageClass != "" {
 		workspaceConfig.StorageClassName = &pvc.StorageClass
 	}
@@ -103,11 +107,16 @@ func updateWorkspaceConfig(pvc *chev2.PVC, isPerWorkspacePVCStorageStrategy bool
 			workspaceConfig.DefaultStorageSize = &controllerv1alpha1.StorageSizes{}
 		}
 
-		pvcSize := resource.MustParse(pvc.ClaimSize)
+		pvcSize, err := resource.ParseQuantity(pvc.ClaimSize)
+		if err != nil {
+			return err
+		}
+
 		if isPerWorkspacePVCStorageStrategy {
 			workspaceConfig.DefaultStorageSize.PerWorkspace = &pvcSize
 		} else {
 			workspaceConfig.DefaultStorageSize.Common = &pvcSize
 		}
 	}
+	return nil
 }

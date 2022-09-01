@@ -12,6 +12,7 @@
 package devworkspaceconfig
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/eclipse-che/che-operator/pkg/common/constants"
@@ -38,8 +39,40 @@ func TestReconcileDevWorkspaceConfigPerUserStorage(t *testing.T) {
 		expectedOperatorConfig *controllerv1alpha1.OperatorConfiguration
 	}
 
+	type errorTestCase struct {
+		name                 string
+		cheCluster           *chev2.CheCluster
+		existedObjects       []runtime.Object
+		expectedErrorMessage string
+	}
+
 	var quantity15Gi = resource.MustParse("15Gi")
 	var quantity10Gi = resource.MustParse("10Gi")
+
+	var expectedErrorTestCases = []errorTestCase{
+		{
+			name: "Invalid claim size string",
+			cheCluster: &chev2.CheCluster{
+				ObjectMeta: metav1.ObjectMeta{
+					Namespace: "eclipse-che",
+					Name:      "eclipse-che",
+				},
+				Spec: chev2.CheClusterSpec{
+					DevEnvironments: chev2.CheClusterDevEnvironments{
+						Storage: chev2.WorkspaceStorage{
+							PvcStrategy: constants.PerUserPVCStorageStrategy,
+							PerUserStrategyPvcConfig: &chev2.PVC{
+								StorageClass: "test-storage",
+								ClaimSize:    "invalid-ClaimSize",
+							},
+						},
+					},
+				},
+			},
+			expectedErrorMessage: "quantities must match the regular expression",
+		},
+	}
+
 	var testCases = []testCase{
 		{
 			name: "Create DevWorkspaceOperatorConfig",
@@ -298,6 +331,18 @@ func TestReconcileDevWorkspaceConfigPerUserStorage(t *testing.T) {
 			assert.NoError(t, err)
 
 			assert.Equal(t, testCase.expectedOperatorConfig, dwoc.Config)
+		})
+	}
+
+	for _, testCase := range expectedErrorTestCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			deployContext := test.GetDeployContext(testCase.cheCluster, testCase.existedObjects)
+			infrastructure.InitializeForTesting(infrastructure.OpenShiftv4)
+
+			devWorkspaceConfigReconciler := NewDevWorkspaceConfigReconciler()
+			_, _, err := devWorkspaceConfigReconciler.Reconcile(deployContext)
+			assert.Error(t, err)
+			assert.Regexp(t, regexp.MustCompile(testCase.expectedErrorMessage), err.Error(), "error message must match")
 		})
 	}
 }
