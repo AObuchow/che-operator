@@ -29,6 +29,8 @@ components:
           value: /home/user/go
         - name: GOCACHE
           value: /tmp/.cache
+        - name: GOBIN
+          value: /home/user/go/bin
 commands:
   - id: go-build
     exec:
