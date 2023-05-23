@@ -1,4 +1,3 @@
-//
 // Copyright (c) 2019-2022 Red Hat, Inc.
 // This program and the accompanying materials are made
 // available under the terms of the Eclipse Public License 2.0
@@ -7,8 +6,8 @@
 // SPDX-License-Identifier: EPL-2.0
 //
 // Contributors:
-//   Red Hat, Inc. - initial API and implementation
 //
+//	Red Hat, Inc. - initial API and implementation
 package devworkspaceconfig
 
 import (
@@ -99,6 +98,8 @@ func updateWorkspaceConfig(cheCluster *chev2.CheCluster, operatorConfig *control
 
 	updateStartTimeout(operatorConfig, devEnvironments.StartTimeoutSeconds)
 
+	updatePersistUserHomeConfig(devEnvironments.PersistUserHome, operatorConfig.Workspace)
+
 	operatorConfig.Workspace.DeploymentStrategy = v1.DeploymentStrategyType(utils.GetValue(string(devEnvironments.DeploymentStrategy), constants.DefaultDeploymentStrategy))
 	return nil
 }
@@ -113,6 +114,7 @@ func updateStartTimeout(operatorConfig *controllerv1alpha1.OperatorConfiguration
 }
 
 func updateWorkspaceStorageConfig(devEnvironments *chev2.CheClusterDevEnvironments, workspaceConfig *controllerv1alpha1.WorkspaceConfig) error {
+	// Update PVC Strategy, StorageClass and PVC size
 	pvcStrategy := utils.GetValue(devEnvironments.Storage.PvcStrategy, constants.DefaultPvcStorageStrategy)
 	isPerWorkspacePVCStorageStrategy := pvcStrategy == constants.PerWorkspacePVCStorageStrategy
 	pvc := map[string]*chev2.PVC{
@@ -143,7 +145,15 @@ func updateWorkspaceStorageConfig(devEnvironments *chev2.CheClusterDevEnvironmen
 			}
 		}
 	}
+
 	return nil
+}
+
+func updatePersistUserHomeConfig(persistentHomeConfig *chev2.PersistentHomeConfig, workspaceConfig *controllerv1alpha1.WorkspaceConfig) {
+	if workspaceConfig.PersistUserHome == nil {
+		workspaceConfig.PersistUserHome = &controllerv1alpha1.PersistentHomeConfig{}
+	}
+	workspaceConfig.PersistUserHome.Enabled = pointer.Bool(pointer.BoolDeref(persistentHomeConfig.Enabled, constants.DefaultPersistUserHomeEnabled))
 }
 
 func updateWorkspaceServiceAccountConfig(devEnvironments *chev2.CheClusterDevEnvironments, workspaceConfig *controllerv1alpha1.WorkspaceConfig) error {
