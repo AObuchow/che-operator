@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "golang.go",
+        "ms-vscode.makefile-tools",
+        "jgclark.vscode-todo-highlight",
+        "ibm.output-colorizer"
+    ]
+}
