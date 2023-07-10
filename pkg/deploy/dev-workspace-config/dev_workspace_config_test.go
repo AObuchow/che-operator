@@ -400,7 +400,7 @@ func TestReconcileDevWorkspaceConfigForContainerBuilds(t *testing.T) {
 
 	var testCases = []testCase{
 		{
-			name: "Create DevWorkspaceOperatorConfig without Pod Security Context if container build disabled",
+			name: "Create DevWorkspaceOperatorConfig without Container Security Context if container build disabled",
 			cheCluster: &chev2.CheCluster{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: "eclipse-che",
@@ -413,13 +413,11 @@ func TestReconcileDevWorkspaceConfigForContainerBuilds(t *testing.T) {
 				},
 			},
 			expectedOperatorConfig: &controllerv1alpha1.OperatorConfiguration{
-				Workspace: &controllerv1alpha1.WorkspaceConfig{
-					DeploymentStrategy: "Recreate",
-				},
+				Workspace: &controllerv1alpha1.WorkspaceConfig{},
 			},
 		},
 		{
-			name: "Create DevWorkspaceOperatorConfig with Pod and Container Security Context if container build enabled",
+			name: "Create DevWorkspaceOperatorConfig with Container Security Context if container build enabled",
 			cheCluster: &chev2.CheCluster{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: "eclipse-che",
@@ -446,7 +444,7 @@ func TestReconcileDevWorkspaceConfigForContainerBuilds(t *testing.T) {
 			},
 		},
 		{
-			name: "Update existing DevWorkspaceOperatorConfig by adding Pod and Container Security Context",
+			name: "Update existing DevWorkspaceOperatorConfig by adding Container Security Context",
 			cheCluster: &chev2.CheCluster{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: "eclipse-che",
@@ -488,7 +486,7 @@ func TestReconcileDevWorkspaceConfigForContainerBuilds(t *testing.T) {
 			},
 		},
 		{
-			name: "Update existing DevWorkspaceOperatorConfig by removing Pod and Container Security Context",
+			name: "Update existing DevWorkspaceOperatorConfig by removing Container Security Context",
 			cheCluster: &chev2.CheCluster{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: "eclipse-che",
@@ -543,7 +541,8 @@ func TestReconcileDevWorkspaceConfigForContainerBuilds(t *testing.T) {
 			err = deployContext.ClusterAPI.Client.Get(context.TODO(), types.NamespacedName{Name: devWorkspaceConfigName, Namespace: testCase.cheCluster.Namespace}, dwoc)
 			assert.NoError(t, err)
 
-			diff := cmp.Diff(testCase.expectedOperatorConfig, dwoc.Config, cmp.Options{cmpopts.IgnoreFields(controllerv1alpha1.WorkspaceConfig{}, "ServiceAccount", "ProjectCloneConfig", "DeploymentStrategy", "DefaultStorageSize", "StorageClassName")})
+			diff := cmp.Diff(testCase.expectedOperatorConfig, dwoc.Config,
+				cmp.Options{cmpopts.IgnoreFields(controllerv1alpha1.WorkspaceConfig{}, "ServiceAccount", "ProjectCloneConfig", "DeploymentStrategy", "DefaultStorageSize", "StorageClassName")})
 			assert.Empty(t, diff)
 		})
 	}
@@ -700,7 +699,8 @@ func TestReconcileDevWorkspaceConfigProgressTimeout(t *testing.T) {
 			err = deployContext.ClusterAPI.Client.Get(context.TODO(), types.NamespacedName{Name: devWorkspaceConfigName, Namespace: testCase.cheCluster.Namespace}, dwoc)
 			assert.NoError(t, err)
 
-			diff := cmp.Diff(testCase.expectedOperatorConfig, dwoc.Config, cmp.Options{cmpopts.IgnoreFields(controllerv1alpha1.WorkspaceConfig{}, "ServiceAccount", "DefaultStorageSize", "StorageClassName", "ProjectCloneConfig", "DeploymentStrategy")})
+			diff := cmp.Diff(testCase.expectedOperatorConfig, dwoc.Config,
+				cmp.Options{cmpopts.IgnoreFields(controllerv1alpha1.WorkspaceConfig{}, "ServiceAccount", "DefaultStorageSize", "StorageClassName", "ProjectCloneConfig", "DeploymentStrategy")})
 			assert.Empty(t, diff)
 		})
 	}
