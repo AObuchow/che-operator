@@ -88,9 +88,7 @@ func updateWorkspaceConfig(cheCluster *chev2.CheCluster, operatorConfig *control
 
 	updateWorkspaceServiceAccountConfig(devEnvironments, operatorConfig.Workspace)
 
-	if err := updateWorkspacePodSchedulerNameConfig(devEnvironments, operatorConfig.Workspace); err != nil {
-		return err
-	}
+	updateWorkspacePodSchedulerNameConfig(devEnvironments, operatorConfig.Workspace)
 
 	updateProjectCloneConfig(devEnvironments, operatorConfig.Workspace)
 
@@ -188,9 +186,8 @@ func updateWorkspaceServiceAccountConfig(devEnvironments *chev2.CheClusterDevEnv
 	}
 }
 
-func updateWorkspacePodSchedulerNameConfig(devEnvironments *chev2.CheClusterDevEnvironments, workspaceConfig *controllerv1alpha1.WorkspaceConfig) error {
+func updateWorkspacePodSchedulerNameConfig(devEnvironments *chev2.CheClusterDevEnvironments, workspaceConfig *controllerv1alpha1.WorkspaceConfig) {
 	workspaceConfig.SchedulerName = devEnvironments.PodSchedulerName
-	return nil
 }
 
 func updateProjectCloneConfig(devEnvironments *chev2.CheClusterDevEnvironments, workspaceConfig *controllerv1alpha1.WorkspaceConfig) {
