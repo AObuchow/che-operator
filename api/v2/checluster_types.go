@@ -127,6 +127,9 @@ type CheClusterDevEnvironments struct {
 	// Disables the container build capabilities.
 	// +optional
 	DisableContainerBuildCapabilities *bool `json:"disableContainerBuildCapabilities,omitempty"`
+	// Workspace security configuration.
+	// +optional
+	Security WorkspaceSecurityConfig `json:"security,omitempty"`
 	// Container build configuration.
 	// +optional
 	ContainerBuildConfiguration *ContainerBuildConfiguration `json:"containerBuildConfiguration,omitempty"`
@@ -454,6 +457,18 @@ type WorkspaceDefaultPlugins struct {
 	Editor string `json:"editor,omitempty"`
 	// Default plug-in URIs for the specified editor.
 	Plugins []string `json:"plugins,omitempty"`
+}
+
+// Workspace security configuration
+type WorkspaceSecurityConfig struct {
+	// PodSecurityContext used by all workspace-related pods.
+	// If set, defined values are merged into the default PodSecurityContext configuration.
+	// +optional
+	PodSecurityContext *corev1.PodSecurityContext `json:"podSecurityContext,omitempty"`
+	// Container SecurityContext used by all workspace-related containers.
+	// If set, defined values are merged into the default Container SecurityContext configuration.
+	// +optional
+	ContainerSecurityContext *corev1.SecurityContext `json:"containerSecurityContext,omitempty"`
 }
 
 // Authentication settings.
