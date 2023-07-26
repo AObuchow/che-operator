@@ -16,6 +16,7 @@ package v2
 // to regenerate `api/v2/zz_generatedxxx` code after modifying this file.
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 
@@ -875,6 +876,18 @@ func (c *CheCluster) GetIdentityToken() string {
 		return constants.AccessToken
 	}
 	return constants.IdToken
+}
+
+// Returns the default container security context required for container builds.
+// Returns an error if the default container security context could not be retrieved.
+func (c *CheCluster) GetDefaultContainerSecurityContext() (*corev1.SecurityContext, error) {
+	containerSecurityContext := &corev1.SecurityContext{}
+	err := json.Unmarshal([]byte(defaults.GetDevEnvironmentsContainerSecurityContext()), &containerSecurityContext)
+	if err != nil {
+		logger.Error(err, "Failed to parse containerSecurityContext", "value", defaults.GetDevEnvironmentsContainerSecurityContext())
+		return nil, err
+	}
+	return containerSecurityContext, nil
 }
 
 func (c *CheCluster) IsAccessTokenConfigured() bool {

@@ -94,9 +94,8 @@ func updateWorkspaceConfig(cheCluster *chev2.CheCluster, operatorConfig *control
 
 	updateProjectCloneConfig(devEnvironments, operatorConfig.Workspace)
 
-	operatorConfig.Workspace.ContainerSecurityContext = nil
-	if cheCluster.IsContainerBuildCapabilitiesEnabled() {
-		operatorConfig.Workspace.ContainerSecurityContext = constants.DefaultWorkspaceContainerSecurityContext.DeepCopy()
+	if err := updateSecurityContext(operatorConfig, cheCluster); err != nil {
+		return err
 	}
 
 	updateStartTimeout(operatorConfig, devEnvironments.StartTimeoutSeconds)
@@ -104,6 +103,25 @@ func updateWorkspaceConfig(cheCluster *chev2.CheCluster, operatorConfig *control
 	updatePersistUserHomeConfig(devEnvironments.PersistUserHome, operatorConfig.Workspace)
 
 	operatorConfig.Workspace.DeploymentStrategy = v1.DeploymentStrategyType(utils.GetValue(string(devEnvironments.DeploymentStrategy), constants.DefaultDeploymentStrategy))
+	return nil
+}
+
+func updateSecurityContext(operatorConfig *controllerv1alpha1.OperatorConfiguration, cheCluster *chev2.CheCluster) error {
+	operatorConfig.Workspace.ContainerSecurityContext = nil
+	if cheCluster.IsContainerBuildCapabilitiesEnabled() {
+		defaultContainerSecurityContext, err := cheCluster.GetDefaultContainerSecurityContext()
+		if err != nil {
+			return err
+		}
+		operatorConfig.Workspace.ContainerSecurityContext = defaultContainerSecurityContext
+	} else if cheCluster.Spec.DevEnvironments.Security.ContainerSecurityContext != nil {
+		operatorConfig.Workspace.ContainerSecurityContext = cheCluster.Spec.DevEnvironments.Security.ContainerSecurityContext
+	}
+
+	operatorConfig.Workspace.PodSecurityContext = nil
+	if cheCluster.Spec.DevEnvironments.Security.PodSecurityContext != nil {
+		operatorConfig.Workspace.PodSecurityContext = cheCluster.Spec.DevEnvironments.Security.PodSecurityContext
+	}
 	return nil
 }
 
