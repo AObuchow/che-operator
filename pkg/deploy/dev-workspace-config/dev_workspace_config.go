@@ -120,7 +120,6 @@ func updateSecurityContext(operatorConfig *controllerv1alpha1.OperatorConfigurat
 	if cheCluster.Spec.DevEnvironments.Security.PodSecurityContext != nil {
 		operatorConfig.Workspace.PodSecurityContext = cheCluster.Spec.DevEnvironments.Security.PodSecurityContext
 	}
-
 	return nil
 }
 
