@@ -504,4 +504,4 @@ replace (
 	sigs.k8s.io/yaml => sigs.k8s.io/yaml v1.2.0
 )
 
-replace github.com/devfile/devworkspace-operator => github.com/aobuchow/devworkspace-operator v0.2.1-0.20240731180627-2e2828f1f7b7
+replace github.com/devfile/devworkspace-operator => github.com/aobuchow/devworkspace-operator v0.2.1-0.20240802172946-b4f22d84c275
