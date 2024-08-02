@@ -503,3 +503,5 @@ replace (
 	sigs.k8s.io/structured-merge-diff/v3 => sigs.k8s.io/structured-merge-diff/v3 v3.0.0-20200116222232-67a7b8c61874
 	sigs.k8s.io/yaml => sigs.k8s.io/yaml v1.2.0
 )
+
+replace github.com/devfile/devworkspace-operator => github.com/aobuchow/devworkspace-operator v0.2.1-0.20240731180627-2e2828f1f7b7
