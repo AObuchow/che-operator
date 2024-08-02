@@ -32,7 +32,7 @@ github.com/davecgh/go-spew/spew
 github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2
 github.com/devfile/api/v2/pkg/attributes
 github.com/devfile/api/v2/pkg/devfile
-# github.com/devfile/devworkspace-operator v0.29.0 => github.com/aobuchow/devworkspace-operator v0.2.1-0.20240731180627-2e2828f1f7b7
+# github.com/devfile/devworkspace-operator v0.29.0 => github.com/aobuchow/devworkspace-operator v0.2.1-0.20240802172946-b4f22d84c275
 ## explicit; go 1.20
 github.com/devfile/devworkspace-operator/apis/controller/v1alpha1
 github.com/devfile/devworkspace-operator/controllers/controller/devworkspacerouting
@@ -1224,4 +1224,4 @@ sigs.k8s.io/yaml
 # sigs.k8s.io/structured-merge-diff => sigs.k8s.io/structured-merge-diff v1.0.2
 # sigs.k8s.io/structured-merge-diff/v3 => sigs.k8s.io/structured-merge-diff/v3 v3.0.0-20200116222232-67a7b8c61874
 # sigs.k8s.io/yaml => sigs.k8s.io/yaml v1.2.0
-# github.com/devfile/devworkspace-operator => github.com/aobuchow/devworkspace-operator v0.2.1-0.20240731180627-2e2828f1f7b7
+# github.com/devfile/devworkspace-operator => github.com/aobuchow/devworkspace-operator v0.2.1-0.20240802172946-b4f22d84c275

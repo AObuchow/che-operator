@@ -176,7 +176,10 @@ func (r *DevWorkspaceRoutingReconciler) Reconcile(ctx context.Context, req ctrl.
 
 		curIngress := ingresses[idx]
 		// TODO: Passing object meta seems ugly but might be only way to do this? https://go.dev/ref/spec#Struct_types
-		addEndpointAnnotations(curIngress.ObjectMeta, instance)
+		err = addEndpointAnnotations(curIngress.ObjectMeta, instance)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
 	}
 	routes := routingObjects.Routes
 	for idx := range routes {
@@ -189,7 +192,10 @@ func (r *DevWorkspaceRoutingReconciler) Reconcile(ctx context.Context, req ctrl.
 		}
 
 		curRoute := routes[idx]
-		addEndpointAnnotations(curRoute.ObjectMeta, instance)
+		err = addEndpointAnnotations(curRoute.ObjectMeta, instance)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
 	}
 
 	servicesInSync, clusterServices, err := r.syncServices(instance, services)
@@ -248,25 +254,15 @@ func (r *DevWorkspaceRoutingReconciler) Reconcile(ctx context.Context, req ctrl.
 	return reconcile.Result{}, r.reconcileStatus(instance, &routingObjects, exposedEndpoints, endpointsAreReady, "")
 }
 
-func addEndpointAnnotations(clusterRoutingObj metav1.ObjectMeta, instance *controllerv1alpha1.DevWorkspaceRouting) {
+func addEndpointAnnotations(clusterRoutingObj metav1.ObjectMeta, instance *controllerv1alpha1.DevWorkspaceRouting) error {
 	if clusterRoutingObj.Annotations != nil {
 		endpointName := ""
-		// Check for DWO-created ingress/route
 		if val, ok := clusterRoutingObj.Annotations[constants.DevWorkspaceEndpointNameAnnotation]; ok {
 			endpointName = val
 		}
-		// Check for Che-created ingress/route
-		cheEndpointNameAnnotation := "che.routing.controller.devfile.io/endpoint-name"
-		if val, ok := clusterRoutingObj.Annotations[cheEndpointNameAnnotation]; ok {
-			endpointName = val
-		}
 
-		// TODO: This feels weird.. look into what the machine name should be..
-		// Machine name is same as component name
-		cheEndpointMachineNameAnnotation := "che.routing.controller.devfile.io/component-name"
 		machineName := ""
-
-		if val, ok := clusterRoutingObj.Annotations[cheEndpointMachineNameAnnotation]; ok {
+		if val, ok := clusterRoutingObj.Annotations[constants.DevWorkspaceComponentNameAnnotation]; ok {
 			machineName = val
 		}
 
@@ -274,9 +270,11 @@ func addEndpointAnnotations(clusterRoutingObj metav1.ObjectMeta, instance *contr
 			for _, endpoint := range instance.Spec.Endpoints[machineName] {
 				if endpoint.Name == endpointName {
 					// Found our endpoint, take the annotations and add them to the ingress/route
-					// TODO: Make sure we check if we're not overwriting an annotation
-
 					for k, v := range endpoint.Annotations {
+
+						if currValue, exists := clusterRoutingObj.Annotations[k]; exists && v != currValue {
+							return fmt.Errorf("conflicting annotations found on endpoint for key %s", k)
+						}
 						clusterRoutingObj.Annotations[k] = v
 					}
 				}
@@ -284,6 +282,8 @@ func addEndpointAnnotations(clusterRoutingObj metav1.ObjectMeta, instance *contr
 		}
 
 	}
+
+	return nil
 }
 
 // setFinalizer ensures a finalizer is set on a devWorkspaceRouting instance; no-op if finalizer is already present.

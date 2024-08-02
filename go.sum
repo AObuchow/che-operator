@@ -649,6 +649,8 @@ github.com/alessio/shellescape v1.2.2/go.mod h1:PZAiSCk0LJaZkiCSkPv8qIobYglO3FPp
 github.com/antihax/optional v0.0.0-20180407024304-ca021399b1a6/go.mod h1:V8iCPQYkqmusNa815XgQio277wI47sdRh1dUOLdyC6Q=
 github.com/aobuchow/devworkspace-operator v0.2.1-0.20240731180627-2e2828f1f7b7 h1:27w/xC9l/YjBaKqkgHFntyPcCvas/esnP74kjldDgdY=
 github.com/aobuchow/devworkspace-operator v0.2.1-0.20240731180627-2e2828f1f7b7/go.mod h1:b2fBHTA6szY4uN46w0PlPKLJO/dzA8N2vvepBxSFmYk=
+github.com/aobuchow/devworkspace-operator v0.2.1-0.20240802172946-b4f22d84c275 h1:hNoZSKORHgAdHfk5UKQfrVtpIivt8cx/On9iyVisBds=
+github.com/aobuchow/devworkspace-operator v0.2.1-0.20240802172946-b4f22d84c275/go.mod h1:b2fBHTA6szY4uN46w0PlPKLJO/dzA8N2vvepBxSFmYk=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
 github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da/go.mod h1:Q73ZrmVTwzkszR9V5SSuryQ31EELlFMUz1kKyl939pY=
 github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310/go.mod h1:ufUuZ+zHj4x4TnLV4JWEpy2hxWSpsRywHrMgIH9cCH8=
